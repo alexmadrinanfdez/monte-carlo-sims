@@ -26,14 +26,30 @@ stops = schedule + delay;
 arrivals = rand(rep, 1) * t_int + schedule - t_int;
 waitt = (1:rep)';
 
+% scales exponentially
+% tic;
+% for i = 1:rep
+%     for j = 1:rep
+%         if arrivals(i) < stops(j)
+%             waitt(i) = stops(j) - arrivals(i);
+%             break
+%         end
+%     end
+% end
+% toc;
+
+% scales linearly
 tic;
 for i = 1:rep
-    for j = 1:rep
-        if arrivals(i) < stops(j)
-            waitt(i) = stops(j) - arrivals(i);
-            break
-        end
+    if i == 1
+        dif = stops(i:i+1) - arrivals(i);
+    elseif i == rep
+        dif = stops(i-1:i) - arrivals(i);
+    else
+        dif = stops(i-1:i+1) - arrivals(i);
     end
+    pos = dif(dif > 0);
+    waitt(i) = min(pos);
 end
 toc;
 
