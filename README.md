@@ -2,5 +2,5 @@
 
 Examples of Monte Carlo simulations.
 Each example includes
-* a code file (`.m`) and
-* its published file (`.pdf`).
+* a code script (`.m`) and
+* its published file (`.pdf`). These are in the `pdf` folder.
