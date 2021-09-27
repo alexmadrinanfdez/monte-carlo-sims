@@ -29,29 +29,19 @@ mu = 7.55;  % true mean wait time
 % constrained by the maximum error allowed (99% of the time). The
 % |meanMC_CLT()| function is part of the GAIL package.
 
-disp(['The true mean is ' num2str(mu)])
-
 span_d = dhi - dlo;
 
 tic;
 x = rand(rep, 3);
 waitt = f(x, t_int, span_d, dhi, dlo); % function definition at the end
-muhat = mean(waitt);
+muhat_n = mean(waitt);
 toc;
-
-disp(['Estimated mean with ' num2str(rep) ' runs: ' num2str(muhat)])
-disp(' ')
 
 tic;
 y = @(n)f(rand(n, 3), t_int, span_d, dhi, dlo);
-[muhat, out] = meanMC_CLT(y, tol);
+[muhat_clt, out] = meanMC_CLT(y, tol);
 toc;
-err = abs(muhat-mu);
-
-disp(['The error is ' num2str(err, '%e')])
-disp(['It should be bounded by ' num2str(out.errBd, '%e')])
-disp([num2str(out.nSample) ' samples used'])
-disp(['Therefore, the estimated mean is ' num2str(muhat)])
+err = abs(muhat_clt-mu);
 
 %% Confidence interval estimation
 % Since an estimated quantity is unlikely to be exact, sometimes is more
@@ -66,7 +56,18 @@ y = f(rand(rep, 3), t_int, span_d, dhi, dlo);
 ci = binomialCI(rep, sum(y > 8));
 toc;
 
-disp('The confidence interval is')
+%% Output results
+
+disp(['The true mean is ' num2str(mu)])
+disp(' ')
+disp(['Estimated mean with ' num2str(rep) ' runs: ' num2str(muhat_n)])
+disp(' ')
+disp(['The error is ' num2str(err, '%e')])
+disp(['It should be bounded by ' num2str(out.errBd, '%e')])
+disp([num2str(out.nSample) ' samples used'])
+disp(['Therefore, the estimated mean is ' num2str(muhat_clt)])
+disp(' ')
+disp('The probability lies within')
 disp(ci)
 
 %% Function
