@@ -8,12 +8,13 @@
 
 %% Parameters
 
-t_int = 15; % time interval between stops
-dlo = -1;   % low end of delay
-dhi = 2;    % high end of delay
-rep = 1e6;  % number of repetitions
-tol = 1/60; % tolerance
-mu = 7.55;  % true mean wait time
+t_int = 15;  % time interval between stops
+dlo = -1;    % low end of delay
+dhi = 2;     % high end of delay
+rep = 1e6;   % number of repetitions
+atol = 1/60; % absolute tolerance
+rtol = 0;    % relative tolerance
+mu = 7.55;   % true mean wait time
 
 %% Mean estimation
 % The Monte-Carlo simulation will assume people arrive at the bus stop
@@ -39,7 +40,7 @@ toc;
 
 tic;
 y = @(n)f(rand(n, 3), t_int, span_d, dhi, dlo);
-[muhat_clt, out] = meanMC_CLT(y, tol);
+[muhat_clt, out] = meanMC_CLT(y, atol, rtol);
 toc;
 err = abs(muhat_clt-mu);
 
