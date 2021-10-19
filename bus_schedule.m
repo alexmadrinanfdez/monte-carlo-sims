@@ -24,6 +24,7 @@ mu = 7.55;   % true mean wait time
 % Furthermore, we will use the inherent symmetry of the problem to rule out
 % one of the posibilities: the passenger arrives after the first bus has
 % already passed. Time is centered on the passenger.
+%
 % Monte Carlo methods are very versatile. In this case, we present two
 % possibilities to estimate the mean waiting time for a bus. The first one
 % is defined by the number of runs performed while the second one is
@@ -49,8 +50,9 @@ err = abs(muhat_clt-mu);
 % useful to compute a range of values within the true answer lies with some
 % probability. That is called a confidence interval.
 % In this example, a confidence interval for the probability that the time
-% to wait of a bus is greater than 8 minutes will be constructed. The
-% function |binomialCI| is implemented in the main directory.
+% to wait of a bus is greater than 8 minutes will be constructed.
+%
+% The function |binomialCI| is implemented in the main directory.
 
 tic;
 y = f(rand(rep, 3), t_int, span_d, dhi, dlo);

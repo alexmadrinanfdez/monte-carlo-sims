@@ -3,7 +3,7 @@
 % arithmetic mean call option
 %
 % $$
-% \int_{\mathbb{R}^2} \max\left( \frac12[S_1(z_1)+S_2(z_2)]-100, 0 \right)
+% \int_{R^2} \max\left( \frac12[S_1(z_1)+S_2(z_2)]-100, 0 \right)
 % \exp\left\{ 
 % \frac{-z^T\Sigma^{-1}z/2}{\sqrt{(2\pi)^2\mathrm{det}(\Sigma)}} \right\}dz
 % $$
