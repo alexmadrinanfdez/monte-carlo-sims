@@ -50,6 +50,7 @@ pdf_beta = @(x) 6 * x .* (1-x);
 
 %% Sample Generation
 
+tic;
 uz = rand(n/c, 2);
 u = uz(:,1);
 z = uz(:,2);
@@ -57,6 +58,7 @@ x = z;
 
 % treat as Not a Number (NaN) rejected samples
 x(u > c * pdf_beta(z) / pdf_unif) = NaN;
+toc;
 
 muhat = mean(x,'omitnan');
 sigmahat = var(x,'omitnan');
@@ -72,3 +74,6 @@ disp(['while its expected value is ' num2str(mu)])
 disp(' ')
 disp(['The variance of our samples is ' num2str(sigmahat)])
 disp(['while its expected value is ' num2str(sigma)])
+
+%%
+% _Author: Alejandro Madriñán Fernández_
