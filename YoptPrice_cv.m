@@ -1,4 +1,4 @@
-function YCV=YoptPrice_cv(optPayoffObj,n)
+function YCV=yOptPrice_cv(optPayoffObj,n)
 % YOPTPRICE_CV creates the control variate output for option pricing using
 % the |optPayoff| object
 

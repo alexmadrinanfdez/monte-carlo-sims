@@ -1,4 +1,4 @@
-function yAnti=YoptPrice_anti(optPayoffObj,n)
+function yAnti=yOptPrice_anti(optPayoffObj,n)
 % YOPTPRICE_ANTI creates payoffs from antithetic Brownian motion sampling
 % for an Asian arithmetic mean put.
 
