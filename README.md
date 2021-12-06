@@ -3,7 +3,7 @@
 Examples of Monte Carlo simulations.
 Each example includes
 * a code script (`.m`) and
-* its published file (`.pdf`). These are in the `pdf` folder.
+* its published file (`.html`). These are in the `html` folder.
 
 There are also MATLAB functions (also `.m`) defined among the examples.
 These functions are used throughout the examples.

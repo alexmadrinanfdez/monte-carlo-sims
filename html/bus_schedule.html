@@ -1,0 +1,221 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Bus schedule</title><meta name="generator" content="MATLAB 9.10"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-12-06"><meta name="DC.source" content="bus_schedule.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Bus schedule</h1><!--introduction--><p>Suppose that a bus is scheduled to arrive at the stop on the hour, at 15 minutes past the hour, at 30 minutes past the hour, and at 45 minutes past the hour. However, due to random fluctuations, it arrives anywhere between 1 minute early and 2 minutes late with uniform distribution ( <img src="bus_schedule_eq04017854493601998736.png" alt="$\mathcal{U}(-1, 2)$" style="width:53px;height:15px;"> ). Assume that the arrivals of different buses are independent and identically distributed (IID).</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Parameters</a></li><li><a href="#2">Mean estimation</a></li><li><a href="#3">Confidence interval estimation</a></li><li><a href="#4">Output results</a></li><li><a href="#5">Function</a></li></ul></div><h2 id="1">Parameters</h2><pre class="codeinput">t_int = 15;  <span class="comment">% time interval between stops</span>
+dlo = -1;    <span class="comment">% low end of delay</span>
+dhi = 2;     <span class="comment">% high end of delay</span>
+rep = 1e6;   <span class="comment">% number of repetitions</span>
+atol = 1/60; <span class="comment">% absolute tolerance</span>
+rtol = 0;    <span class="comment">% relative tolerance</span>
+mu = 7.55;   <span class="comment">% true mean wait time</span>
+</pre><h2 id="2">Mean estimation</h2><p>The Monte-Carlo simulation will assume people arrive at the bus stop randomly, one person every time a bus arrives ( <img src="bus_schedule_eq08421143184387682279.png" alt="$\mathcal{U}(0, 15)$" style="width:49px;height:15px;"> ). Passengers will enter the first bus that arrives. There is no problem of space inside the bus. Furthermore, we will use the inherent symmetry of the problem to rule out one of the posibilities: the passenger arrives after the first bus has already passed. Time is centered on the passenger.</p><p>Monte Carlo methods are very versatile. In this case, we present two possibilities to estimate the mean waiting time for a bus. The first one is defined by the number of runs performed while the second one is constrained by the maximum error allowed (99% of the time). The <tt>meanMC_CLT()</tt> function is part of the GAIL package.</p><pre class="codeinput">span_d = dhi - dlo;
+
+tic;
+x = rand(rep, 3);
+waitt = f(x, t_int, span_d, dhi, dlo); <span class="comment">% function definition at the end</span>
+muhat_n = mean(waitt);
+toc;
+
+tic;
+y = @(n)f(rand(n, 3), t_int, span_d, dhi, dlo);
+[muhat_clt, out] = meanMC_CLT(y, atol, rtol);
+toc;
+err = abs(muhat_clt-mu);
+</pre><h2 id="3">Confidence interval estimation</h2><p>Since an estimated quantity is unlikely to be exact, sometimes is more useful to compute a range of values within the true answer lies with some probability. That is called a confidence interval. In this example, a confidence interval for the probability that the time to wait of a bus is greater than 8 minutes will be constructed.</p><p>The function <tt>binomialCI</tt> is implemented in the main directory.</p><pre class="codeinput">tic;
+y = f(rand(rep, 3), t_int, span_d, dhi, dlo);
+ci = binomialCI(rep, sum(y &gt; 8));
+toc;
+</pre><pre class="codeoutput">Elapsed time is 0.618662 seconds.
+</pre><h2 id="4">Output results</h2><pre class="codeinput">disp([<span class="string">'The true mean is '</span> num2str(mu)])
+disp(<span class="string">' '</span>)
+disp([<span class="string">'Estimated mean with '</span> num2str(rep) <span class="string">' runs: '</span> num2str(muhat_n)])
+disp(<span class="string">' '</span>)
+disp([<span class="string">'The error is '</span> num2str(err, <span class="string">'%e'</span>)])
+disp([<span class="string">'It should be bounded by '</span> num2str(out.errBd, <span class="string">'%e'</span>)])
+disp([num2str(out.nSample) <span class="string">' samples used'</span>])
+disp([<span class="string">'Therefore, the estimated mean is '</span> num2str(muhat_clt)])
+disp(<span class="string">' '</span>)
+disp(<span class="string">'The probability lies within'</span>)
+disp(ci)
+</pre><pre class="codeoutput">The true mean is 7.55
+ 
+Estimated mean with 1000000 runs: 7.5482
+ 
+The error is 2.162902e-04
+It should be bounded by 1.666667e-02
+663329 samples used
+Therefore, the estimated mean is 7.5502
+ 
+The probability lies within
+    0.4654    0.4680
+
+</pre><h2 id="5">Function</h2><pre class="codeinput"><span class="keyword">function</span> [y] = f(x, t_int, span_d, dhi, dlo)
+<span class="comment">% function for waiting time (y)</span>
+
+x_p = x(:, 1) * t_int;
+x_2 = x(:, 2) * span_d + t_int + dlo - dhi;
+x_3 = x(:, 3) * span_d + 2*t_int + dlo - dhi;
+
+y = (x_2 - x_p).*(x_2 &gt;= x_p) + (x_3 - x_p).*(x_2 &lt; x_p);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Elapsed time is 0.458420 seconds.
+Elapsed time is 0.268297 seconds.
+</pre><p><i>Author: Alejandro Madri&ntilde;&aacute;n Fern&aacute;ndez</i></p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2021a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Bus schedule
+% Suppose that a bus is scheduled to arrive at the stop on the hour, at 15 
+% minutes past the hour, at 30 minutes past the hour, and at 45 minutes
+% past the hour. However, due to random fluctuations, it arrives anywhere
+% between 1 minute early and 2 minutes late with uniform distribution
+% ( $\mathcal{U}(-1, 2)$ ). Assume that the arrivals of different buses 
+% are independent and identically distributed (IID).
+
+%% Parameters
+
+t_int = 15;  % time interval between stops
+dlo = -1;    % low end of delay
+dhi = 2;     % high end of delay
+rep = 1e6;   % number of repetitions
+atol = 1/60; % absolute tolerance
+rtol = 0;    % relative tolerance
+mu = 7.55;   % true mean wait time
+
+%% Mean estimation
+% The Monte-Carlo simulation will assume people arrive at the bus stop
+% randomly, one person every time a bus arrives ( $\mathcal{U}(0, 15)$ ).
+% Passengers will enter the first bus that arrives. There is no problem of
+% space inside the bus.
+% Furthermore, we will use the inherent symmetry of the problem to rule out
+% one of the posibilities: the passenger arrives after the first bus has
+% already passed. Time is centered on the passenger.
+%
+% Monte Carlo methods are very versatile. In this case, we present two
+% possibilities to estimate the mean waiting time for a bus. The first one
+% is defined by the number of runs performed while the second one is
+% constrained by the maximum error allowed (99% of the time). The
+% |meanMC_CLT()| function is part of the GAIL package.
+
+span_d = dhi - dlo;
+
+tic;
+x = rand(rep, 3);
+waitt = f(x, t_int, span_d, dhi, dlo); % function definition at the end
+muhat_n = mean(waitt);
+toc;
+
+tic;
+y = @(n)f(rand(n, 3), t_int, span_d, dhi, dlo);
+[muhat_clt, out] = meanMC_CLT(y, atol, rtol);
+toc;
+err = abs(muhat_clt-mu);
+
+%% Confidence interval estimation
+% Since an estimated quantity is unlikely to be exact, sometimes is more
+% useful to compute a range of values within the true answer lies with some
+% probability. That is called a confidence interval.
+% In this example, a confidence interval for the probability that the time
+% to wait of a bus is greater than 8 minutes will be constructed.
+%
+% The function |binomialCI| is implemented in the main directory.
+
+tic;
+y = f(rand(rep, 3), t_int, span_d, dhi, dlo);
+ci = binomialCI(rep, sum(y > 8));
+toc;
+
+%% Output results
+
+disp(['The true mean is ' num2str(mu)])
+disp(' ')
+disp(['Estimated mean with ' num2str(rep) ' runs: ' num2str(muhat_n)])
+disp(' ')
+disp(['The error is ' num2str(err, '%e')])
+disp(['It should be bounded by ' num2str(out.errBd, '%e')])
+disp([num2str(out.nSample) ' samples used'])
+disp(['Therefore, the estimated mean is ' num2str(muhat_clt)])
+disp(' ')
+disp('The probability lies within')
+disp(ci)
+
+%% Function
+
+function [y] = f(x, t_int, span_d, dhi, dlo)
+% function for waiting time (y)
+
+x_p = x(:, 1) * t_int;
+x_2 = x(:, 2) * span_d + t_int + dlo - dhi;
+x_3 = x(:, 3) * span_d + 2*t_int + dlo - dhi;
+
+y = (x_2 - x_p).*(x_2 >= x_p) + (x_3 - x_p).*(x_2 < x_p);
+end
+
+%%
+% _Author: Alejandro Madriñán Fernández_
+##### SOURCE END #####
+--></body></html>

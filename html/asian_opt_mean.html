@@ -1,0 +1,157 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Asian option call price</title><meta name="generator" content="MATLAB 9.10"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-12-06"><meta name="DC.source" content="asian_opt_mean.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Asian option call price</h1><!--introduction--><p>Consider the following integral, which arises in the pricing of an Asian arithmetic mean call option</p><p><img src="asian_opt_mean_eq15512594101711946184.png" alt="$$&#xA;\int_{R^2} \max\left( \frac12[S_1(z_1)+S_2(z_2)]-100, 0 \right)&#xA;\exp\left\{&#xA;\frac{-z^T\Sigma^{-1}z/2}{\sqrt{(2\pi)^2\mathrm{det}(\Sigma)}} \right\}dz&#xA;$$" style="width:405px;height:45px;"></p><p>Notice the exponent part (<img src="asian_opt_mean_eq15253195788368660279.png" alt="$e^{g(z)}$" style="width:24px;height:14px;">) coresponds to the probability distribution function of a normally distributed random vector with covariance matrix <img src="asian_opt_mean_eq11513513746854591617.png" alt="$\Sigma$" style="width:9px;height:11px;">. That's the main reason we will generate IID standard normal random variables. We omit the mathematical justification here.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Parameters</a></li><li><a href="#2">Integral approximation</a></li><li><a href="#3">Output results</a></li><li><a href="#4">Function</a></li></ul></div><h2 id="1">Parameters</h2><pre class="codeinput">abstol = 0.02;          <span class="comment">% absolute error tolerance</span>
+reltol = 0;             <span class="comment">% relative error tolerance</span>
+Sigma = [.5 .5; .5 1];  <span class="comment">% covariance matrix</span>
+</pre><h2 id="2">Integral approximation</h2><p>Monte Carlo methods can be used to estimate expectations, the mean value of a random variable's function. For continuous variables, expectations take the form of integrals.</p><p>Therefore, if we can express an integral as an expectation, it is possible to estimate its value using Monte Carlo methods.</p><pre class="codeinput">A = chol(Sigma); <span class="comment">% Sigma = A'*A</span>
+
+s_1 = @(z_1)100*exp(-0.0225 + 0.3*z_1);
+s_2 = @(z_2)100*exp(-0.045 + 0.3*z_2);
+z = @(n)randn(n, 2)*A;
+
+g = @(n)gsub(n, z, s_1, s_2); <span class="comment">% encapsulate inner function</span>
+
+tic;
+[muhat, out] = meanMC_g(g, abstol, reltol);
+toc;
+</pre><h2 id="3">Output results</h2><pre class="codeinput">disp([<span class="string">'The estimated fair price is '</span> num2str(muhat)])
+</pre><pre class="codeoutput">The estimated fair price is 9.4481
+</pre><h2 id="4">Function</h2><pre class="codeinput"><span class="keyword">function</span> [price] = gsub(n, z, s_1, s_2)
+<span class="comment">%GSUB Pricing of an Asian arithmetic mean call option</span>
+zn = z(n);
+s1 = s_1(zn(:, 1));
+s2 = s_2(zn(:, 2));
+asianCallOpt = .5*(s1 + s2) - 100;
+price = max([asianCallOpt zeros(n, 1)], [], 2);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Elapsed time is 0.760853 seconds.
+</pre><p><i>Author: Alejandro Madri&ntilde;&aacute;n Fern&aacute;ndez</i></p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2021a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Asian option call price
+% Consider the following integral, which arises in the pricing of an Asian
+% arithmetic mean call option
+%
+% $$
+% \int_{R^2} \max\left( \frac12[S_1(z_1)+S_2(z_2)]-100, 0 \right)
+% \exp\left\{ 
+% \frac{-z^T\Sigma^{-1}z/2}{\sqrt{(2\pi)^2\mathrm{det}(\Sigma)}} \right\}dz
+% $$
+% 
+% Notice the exponent part ($e^{g(z)}$) coresponds to the probability
+% distribution function of a normally distributed random vector with
+% covariance matrix $\Sigma$. That's the main reason we will generate IID
+% standard normal random variables. We omit the mathematical justification
+% here.
+
+%% Parameters
+
+abstol = 0.02;          % absolute error tolerance
+reltol = 0;             % relative error tolerance
+Sigma = [.5 .5; .5 1];  % covariance matrix
+
+%% Integral approximation
+% Monte Carlo methods can be used to estimate expectations, the mean
+% value of a random variable's function. For continuous variables, 
+% expectations take the form of integrals.
+%
+% Therefore, if we can express an integral as an expectation, it is
+% possible to estimate its value using Monte Carlo methods.
+
+A = chol(Sigma); % Sigma = A'*A
+
+s_1 = @(z_1)100*exp(-0.0225 + 0.3*z_1);
+s_2 = @(z_2)100*exp(-0.045 + 0.3*z_2);
+z = @(n)randn(n, 2)*A;
+
+g = @(n)gsub(n, z, s_1, s_2); % encapsulate inner function
+
+tic;
+[muhat, out] = meanMC_g(g, abstol, reltol);
+toc;
+
+%% Output results
+
+disp(['The estimated fair price is ' num2str(muhat)])
+
+%% Function
+
+function [price] = gsub(n, z, s_1, s_2)
+%GSUB Pricing of an Asian arithmetic mean call option
+zn = z(n);
+s1 = s_1(zn(:, 1));
+s2 = s_2(zn(:, 2));
+asianCallOpt = .5*(s1 + s2) - 100;
+price = max([asianCallOpt zeros(n, 1)], [], 2);
+end
+
+%%
+% _Author: Alejandro Madriñán Fernández_
+##### SOURCE END #####
+--></body></html>

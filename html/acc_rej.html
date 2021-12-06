@@ -1,0 +1,186 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Acceptance-rejection method</title><meta name="generator" content="MATLAB 9.10"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-12-06"><meta name="DC.source" content="acc_rej.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Acceptance-rejection method</h1><!--introduction--><p>Generate samples of a beta distribution with <img src="acc_rej_eq17908508591556559267.png" alt="$\alpha=\beta=2$" style="width:64px;height:13px;"> using an acceptance-rejection method.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Beta distribution</a></li><li><a href="#2">Sampling</a></li><li><a href="#3">Parameters</a></li><li><a href="#4">Sample Generation</a></li><li><a href="#5">Output resutls</a></li></ul></div><h2 id="1">Beta distribution</h2><p>The beta distribution, <img src="acc_rej_eq13802141430975272646.png" alt="$\mathrm{beta}(\alpha,\beta)$" style="width:63px;height:15px;">, has the general form,</p><p><img src="acc_rej_eq17348217280238000006.png" alt="$$&#xA;f(x) = \frac1{B(\alpha,\beta)} x^{\alpha-1}(1-x)^{\beta-1}&#xA;\Leftrightarrow B(\alpha,\beta) =&#xA;\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}&#xA;$$" style="width:346px;height:35px;"></p><p>with <img src="acc_rej_eq17908508591556559267.png" alt="$\alpha=\beta=2$" style="width:64px;height:13px;">. One useful property of the gamma function when its argument is an integer is that <img src="acc_rej_eq15482284800777008797.png" alt="$\Gamma(n)=(n-1)!$" style="width:97px;height:15px;">. Therefore,</p><p><img src="acc_rej_eq05982114795567538322.png" alt="$$&#xA;B(\alpha,\beta) =&#xA;\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} =&#xA;\frac{\Gamma(2)\Gamma(2)}{\Gamma(4)} =&#xA;\frac{1!1!}{3!} = \frac16 \Rightarrow f(x) = 6x(1-x).&#xA;$$" style="width:421px;height:35px;"></p><p>This makes it evident that the behaviour of <img src="acc_rej_eq12585209156759790353.png" alt="$f(x|\alpha,\beta)$" style="width:55px;height:15px;"> changes its behavior drastically with different values of <img src="acc_rej_eq14221827199139923399.png" alt="$\alpha$" style="width:9px;height:7px;"> and <img src="acc_rej_eq17331442575217596290.png" alt="$\beta$" style="width:9px;height:13px;">. That is why the code here is not general and not easy to generalize to every beta distribtuion.</p><h2 id="2">Sampling</h2><p>The <b>acceptance-rejection</b> method implies that samples are generated from a known distribution (<img src="acc_rej_eq11695215030516304895.png" alt="$g(x)$" style="width:26px;height:15px;">) with the same range as the wanted, and that sample distribution is corrected afterwards by the ratio of distributions <img src="acc_rej_eq10510234298479061690.png" alt="$f(x)/g(x)$" style="width:61px;height:15px;">, so that some samples are <i>rejected</i>. The final instances of the final distribution are only the accepted samples.</p><h2 id="3">Parameters</h2><pre class="codeinput">a = 2;    <span class="comment">% alpha</span>
+b = 2;    <span class="comment">% beta</span>
+c = 2/3;  <span class="comment">% ratio constant</span>
+n = 1000; <span class="comment">% generated</span>
+
+pdf_unif = 1;
+pdf_beta = @(x) 6 * x .* (1-x);
+</pre><h2 id="4">Sample Generation</h2><pre class="codeinput">tic;
+uz = rand(n/c, 2);
+u = uz(:,1);
+z = uz(:,2);
+x = z;
+
+<span class="comment">% treat as Not a Number (NaN) rejected samples</span>
+x(u &gt; c * pdf_beta(z) / pdf_unif) = NaN;
+toc;
+
+muhat = mean(x,<span class="string">'omitnan'</span>);
+sigmahat = var(x,<span class="string">'omitnan'</span>);
+</pre><pre class="codeoutput">Elapsed time is 0.008317 seconds.
+</pre><h2 id="5">Output resutls</h2><pre class="codeinput"><span class="comment">% expectation and variance of the beta distribution</span>
+mu = a/(a + b);
+sigma = a * b / ((a + b)^2 * (a + b + 1));
+
+disp([<span class="string">'The mean of our samples is '</span> num2str(muhat)])
+disp([<span class="string">'while its expected value is '</span> num2str(mu)])
+disp(<span class="string">' '</span>)
+disp([<span class="string">'The variance of our samples is '</span> num2str(sigmahat)])
+disp([<span class="string">'while its expected value is '</span> num2str(sigma)])
+</pre><pre class="codeoutput">The mean of our samples is 0.50605
+while its expected value is 0.5
+ 
+The variance of our samples is 0.048742
+while its expected value is 0.05
+</pre><p><i>Author: Alejandro Madri&ntilde;&aacute;n Fern&aacute;ndez</i></p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2021a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Acceptance-rejection method
+% 
+% Generate samples of a beta distribution with $\alpha=\beta=2$ using an 
+% acceptance-rejection method.
+
+%% Beta distribution
+% 
+% The beta distribution, $\mathrm{beta}(\alpha,\beta)$, has the general
+% form,
+% 
+% $$
+% f(x) = \frac1{B(\alpha,\beta)} x^{\alpha-1}(1-x)^{\beta-1} 
+% \Leftrightarrow B(\alpha,\beta) = 
+% \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}
+% $$
+% 
+% with $\alpha=\beta=2$.
+% One useful property of the gamma function when its argument is an integer
+% is that $\Gamma(n)=(n-1)!$. Therefore,
+%
+% $$
+% B(\alpha,\beta) = 
+% \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} = 
+% \frac{\Gamma(2)\Gamma(2)}{\Gamma(4)} = 
+% \frac{1!1!}{3!} = \frac16 \Rightarrow f(x) = 6x(1-x).
+% $$
+%
+% This makes it evident that the behaviour of $f(x|\alpha,\beta)$ changes
+% its behavior drastically with different values of $\alpha$ and $\beta$.
+% That is why the code here is not general and not easy to generalize to
+% every beta distribtuion.
+
+%% Sampling
+% 
+% The *acceptance-rejection* method implies that samples are generated from
+% a known distribution ($g(x)$) with the same range as the wanted, and that
+% sample distribution is corrected afterwards by the ratio of distributions
+% $f(x)/g(x)$, so that some samples are _rejected_. The final instances of
+% the final distribution are only the accepted samples.
+
+%% Parameters
+
+a = 2;    % alpha
+b = 2;    % beta
+c = 2/3;  % ratio constant
+n = 1000; % generated
+
+pdf_unif = 1;
+pdf_beta = @(x) 6 * x .* (1-x);
+
+%% Sample Generation
+
+tic;
+uz = rand(n/c, 2);
+u = uz(:,1);
+z = uz(:,2);
+x = z;
+
+% treat as Not a Number (NaN) rejected samples
+x(u > c * pdf_beta(z) / pdf_unif) = NaN;
+toc;
+
+muhat = mean(x,'omitnan');
+sigmahat = var(x,'omitnan');
+
+%% Output resutls
+
+% expectation and variance of the beta distribution
+mu = a/(a + b);
+sigma = a * b / ((a + b)^2 * (a + b + 1));
+
+disp(['The mean of our samples is ' num2str(muhat)])
+disp(['while its expected value is ' num2str(mu)])
+disp(' ')
+disp(['The variance of our samples is ' num2str(sigmahat)])
+disp(['while its expected value is ' num2str(sigma)])
+
+%%
+% _Author: Alejandro Madriñán Fernández_
+##### SOURCE END #####
+--></body></html>
